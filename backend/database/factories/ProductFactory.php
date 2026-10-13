@@ -2,23 +2,26 @@
 
 namespace Database\Factories;
 
-use App\Models\Product;
+use App\Models\Category;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Product>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */
 class ProductFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'category_id' => Category::factory(),
+            'supplier_id' => Supplier::factory(),
+            'name' => ucfirst(fake()->unique()->words(3, true)),
+            'sku' => strtoupper(fake()->unique()->bothify('???-###')),
+            'unit' => fake()->randomElement(['kg', 'piece', 'tray', 'sack', 'pack', 'bottle']),
+            'price' => fake()->randomFloat(2, 20, 2000),
+            'stock_qty' => fake()->numberBetween(0, 100),
+            'reorder_level' => fake()->numberBetween(3, 20),
         ];
     }
 }

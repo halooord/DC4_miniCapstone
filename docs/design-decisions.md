@@ -45,3 +45,11 @@ These refine the CP1 proposal. They do not change the project's scope.
 19\. Low stock rule: a product is low when stock_qty <= reorder_level. Search, filters, and the dashboard all use this rule.
 
 20\. stock_qty, product status fields, purchase order status, approver, and receiver are not mass-assignable. They change only through stock movements and the purchase order workflow code.
+
+21\. Seed data is built from stock movements: each product starts with an opening-stock movement, and every product's stock_qty equals the sum of its movements.
+
+22\. Six products are seeded as low stock, with pending or approved purchase orders, to support the demo story (low stock, restock request, approval, receiving).
+
+23\. Units now also include "pack" and "bottle" (supplements). The unit validation list is: kg, piece, tray, sack, pack, bottle.
+
+24\. Demo accounts are development-only: admin@poultrystock.test, staff@poultrystock.test, ramon@poultrystock.test.
