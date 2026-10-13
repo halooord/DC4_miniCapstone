@@ -34,10 +34,14 @@ These refine the CP1 proposal. They do not change the project's scope.
 
 14\. Authentication is written by hand with Sanctum API tokens (no Breeze).
 
-15. stock_movements gets a nullable purchase_order_id so a stock-in can be traced to the order that caused it.
+15\. stock_movements gets a nullable purchase_order_id so a stock-in can be traced to the order that caused it.
 
-16. purchase_orders gets received_by, approved_at, and received_at. approved_by / approved_at record the admin who decided (approve or reject).
+16\. purchase_orders gets received_by, approved_at, and received_at. approved_by / approved_at record the admin who decided (approve or reject).
 
-17. The unit column is a string validated against a list (kg, piece, tray, sack, ...) instead of a database enum.
+17\. The unit column is a string validated against a list (kg, piece, tray, sack, ...) instead of a database enum.
 
-18. A product can appear only once per purchase order (unique purchase_order_id + product_id).
+18\. A product can appear only once per purchase order (unique purchase_order_id + product_id).
+
+19\. Low stock rule: a product is low when stock_qty <= reorder_level. Search, filters, and the dashboard all use this rule.
+
+20\. stock_qty, product status fields, purchase order status, approver, and receiver are not mass-assignable. They change only through stock movements and the purchase order workflow code.
