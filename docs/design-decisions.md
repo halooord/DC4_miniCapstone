@@ -1,0 +1,36 @@
+\# PoultryStock: Design Decisions (agreed after proposal review)
+
+
+
+These refine the CP1 proposal. They do not change the project's scope.
+
+
+
+1\. The text table spec is the source of truth. The final ERD image is redrawn from the migrations.
+
+2\. stock\_qty, movement quantity, and PO item quantity use decimal(10,2) so weighed items (kg of dressed chicken) work. Validation: numeric and greater than 0.
+
+3\. stock\_movements gets a "direction" column (increase / decrease), required only when type = adjustment. "in" always adds. "out" and "spoilage" always subtract.
+
+4\. Manual stock-in is allowed for admin and staff (deliveries without a PO). Receiving a PO also creates "in" movements.
+
+5\. Categories, products, and suppliers: create, update, and delete are admin-only. Staff are read-only and change stock only through movements.
+
+6\. Any authenticated staff or admin can mark an approved PO as received. A row lock plus a status check prevents double receiving.
+
+7\. POST /api/register always creates a staff user. The admin is seeded. Any "role" in the request body is ignored.
+
+8\. Admin-only Users management (list, create, change role, delete) is added as an extra CRUD resource.
+
+9\. Staff see only their own stock movements. Admin sees all, with a filter by user.
+
+10\. Accountability = stock movements (who recorded) + PO requested\_by / approved\_by.
+
+11\. Deleting a category, supplier, product, or user that is referenced elsewhere is blocked (foreign keys use restrict). The API returns 409 with a clear message.
+
+12\. Dashboard "inventory value" = SUM(price \* stock\_qty) at selling price.
+
+13\. Every product on a PO must belong to the PO's supplier.
+
+14\. Authentication is written by hand with Sanctum API tokens (no Breeze).
+
