@@ -1,0 +1,65 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1c2a38;
+  background: #f4f6f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body { margin: 0; min-width: 320px; }
+a { color: #086b69; }
+a:hover { color: #05524f; }
+
+.btn-primary {
+  --bs-btn-bg: #0c7773;
+  --bs-btn-border-color: #0c7773;
+  --bs-btn-hover-bg: #09615e;
+  --bs-btn-hover-border-color: #09615e;
+  --bs-btn-active-bg: #075753;
+  --bs-btn-active-border-color: #075753;
+  --bs-btn-disabled-bg: #0c7773;
+  --bs-btn-disabled-border-color: #0c7773;
+}
+.form-control:focus { border-color: #0c7773; box-shadow: 0 0 0 .2rem rgba(12, 119, 115, .14); }
+
+.app-wrapper { background: #f4f6f8; }
+.app-header { background: #0f1d2d; }
+.brand-mark {
+  background: #f2bc61;
+  color: #122031;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  font-weight: 800;
+}
+.app-nav-link { color: #c2ccd8; border-radius: 7px; padding-inline: 14px !important; }
+.app-nav-link:hover, .app-nav-link.active { color: #fff; background: rgba(255, 255, 255, .11); }
+.user-meta { color: #eef3f8; font-size: .85rem; line-height: 1.25; }
+.user-meta .small { color: #aab9c9; }
+
+.eyebrow { color: #0c7773; font-size: .74rem; font-weight: 800; letter-spacing: .13em; }
+.page-title { font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -.03em; }
+.surface-card { background: #fff; border: 1px solid #e7ecf0; border-radius: 15px; box-shadow: 0 4px 22px rgba(19, 39, 61, .04); }
+.card-kicker { color: #0c7773; font-size: .73rem; letter-spacing: .09em; font-weight: 800; }
+
+.auth-page { background: linear-gradient(120deg, #0f1d2d, #17394a); }
+.auth-card { max-width: 940px; background: #fff; border-radius: 18px; }
+.auth-side { background: #13293a; color: #fff; min-height: 400px; }
+.auth-brand { font-size: 1.3rem; font-weight: 800; }
+.auth-description { color: #bdcbd8; }
+.auth-card .form-label { font-size: .9rem; }
+
+.toast-stack { position: fixed; z-index: 1100; top: 1.25rem; right: 1rem; width: min(380px, calc(100vw - 2rem)); }
+.toast-stack .alert { margin-bottom: .7rem; }
+.empty-state-icon { display: grid; place-items: center; background: #e9f1f0; border-radius: 999px; width: 48px; height: 48px; color: #0c7773; font-size: 32px; }
+
+@media (max-width: 767.98px) {
+  .auth-side { min-height: auto; }
+  .auth-side h1 { font-size: 1.8rem; }
+  .auth-brand { margin-bottom: 1.5rem !important; }
+  .user-meta { text-align: left; }
+  .app-nav-link { padding: .65rem .8rem !important; }
+}
