@@ -53,3 +53,10 @@ These refine the CP1 proposal. They do not change the project's scope.
 23\. Units now also include "pack" and "bottle" (supplements). The unit validation list is: kg, piece, tray, sack, pack, bottle.
 
 24\. Demo accounts are development-only: admin@poultrystock.test, staff@poultrystock.test, ramon@poultrystock.test.
+
+25. Purchase order workflow: pending -> approved -> received, or pending -> rejected. Wrong-state actions return 409. Wrong-role actions return 403.
+26. Staff may edit or delete only their own pending orders (PurchaseOrderPolicy). Admins may edit or delete any pending order.
+27. Receiving runs in one transaction with row locks. It adds stock, logs an "in" movement linked to the order, and sets received_by and received_at. Receiving twice returns 409.
+28. Admin Users CRUD: no self-delete, no demoting the last admin, no deleting users with history. Changing another user's role or password signs that user out.
+29. Dashboard rules: low stock = stock_qty <= reorder_level; inventory value = SUM(price x stock_qty); this week = since Monday 00:00.
+30. CORS allows only the React dev server (http://localhost:5173).
