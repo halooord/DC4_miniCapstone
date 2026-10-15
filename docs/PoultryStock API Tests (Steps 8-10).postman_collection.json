@@ -1,0 +1,3954 @@
+{
+  "info": {
+    "_postman_id": "e73f36f4-28fe-4371-aaa3-d935c5414bfc",
+    "name": "PoultryStock API Tests (Steps 8-10)",
+    "description": "Backend test suite. Before EACH full run: php artisan migrate:fresh --seed. Select the PoultryStock Local environment (needs base_url), then Run collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58920569",
+    "_collection_link": "https://go.postman.co/collection/58920569-e73f36f4-28fe-4371-aaa3-d935c5414bfc?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "0 Login",
+      "item": [
+        {
+          "name": "L1 Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.environment.set(\"admin_token\", pm.response.json().token);",
+                  "pm.test(\"Role is admin\", function () { pm.expect(pm.response.json().user.role).to.eql(\"admin\"); });"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('run_id', String(Date.now()));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@poultrystock.test\",\n  \"password\": \"Admin@12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "L2 Login staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.environment.set(\"staff_token\", pm.response.json().token);",
+                  "pm.test(\"Role is staff\", function () { pm.expect(pm.response.json().user.role).to.eql(\"staff\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@poultrystock.test\",\n  \"password\": \"Staff@12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "L3 Login Ramon (staff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.environment.set(\"ramon_token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ramon@poultrystock.test\",\n  \"password\": \"Staff@12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1 As ADMIN (Step 8)",
+      "item": [
+        {
+          "name": "A01 Categories list",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"5 seeded categories\", function () { var d = pm.response.json().data; pm.expect(d.length).to.be.at.least(5); pm.expect(d[0]).to.have.property(\"products_count\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A02 Create category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_category_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Category {{run_id}}\",\n  \"description\": \"Temporary\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A03 Create duplicate category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on name\", function () { pm.expect(pm.response.json().errors).to.have.property(\"name\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Category {{run_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A04 Update category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Name changed\", function () { pm.expect(pm.response.json().data.name).to.include(\"edited\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Category {{run_id}} edited\",\n  \"description\": \"Edited\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/{{tmp_category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "{{tmp_category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A05 Delete empty category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/{{tmp_category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "{{tmp_category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A06 Delete category that has products (blocked)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A07 Suppliers list",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"At least 4 suppliers\", function () { pm.expect(pm.response.json().data.length).to.be.at.least(4); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A08 Create supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_supplier_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Supplier\",\n  \"contact_person\": \"Juan Dela Cruz\",\n  \"phone\": \"0917 555 0100\",\n  \"address\": \"Tagbilaran City, Bohol\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A09 Create supplier, bad phone and no name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Errors on name and phone\", function () { var e = pm.response.json().errors; pm.expect(e).to.have.property(\"name\"); pm.expect(e).to.have.property(\"phone\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"phone\": \"abc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A10 Update supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Supplier Edited\",\n  \"phone\": \"0917 555 0101\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/suppliers/{{tmp_supplier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers",
+                "{{tmp_supplier_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A11 Delete empty supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/suppliers/{{tmp_supplier_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers",
+                "{{tmp_supplier_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A12 Delete supplier that has products (blocked)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/suppliers/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A13 Products page 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"10 per page, 25+ total, has category\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.eql(10); pm.expect(j.meta.per_page).to.eql(10); pm.expect(j.meta.total).to.be.at.least(25); pm.expect(j.data[0].category).to.have.property(\"name\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A14 Search by name (egg)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"6 egg products\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.eql(6); j.data.forEach(function (p) { pm.expect(p.name.toLowerCase()).to.include(\"egg\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?search=egg",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "egg"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A15 Search by SKU (FD-BST)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Exactly 1 product\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.eql(1); pm.expect(j.data[0].sku).to.eql(\"FD-BST-001\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?search=FD-BST",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "FD-BST"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A16 Filter by category (Eggs = 2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"6 products, all category 2\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.eql(6); j.data.forEach(function (p) { pm.expect(p.category_id).to.eql(2); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?category_id=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A17 Low-stock filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"6 low-stock products\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.eql(6); j.data.forEach(function (p) { pm.expect(p.is_low_stock).to.eql(true); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?low_stock=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "low_stock",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A18 Page 2 keeps the filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Page 2 has 2 rows and links keep low_stock\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.eql(2); pm.expect(j.meta.current_page).to.eql(2); pm.expect(j.links.first).to.include(\"low_stock=1\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?low_stock=1&per_page=4&page=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "low_stock",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "4"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A19 Create product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_product_id\", pm.response.json().data.id);",
+                  "pm.test(\"Starts with 0 stock\", function () { pm.expect(pm.response.json().data.stock_qty).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"supplier_id\": 1,\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-{{run_id}}\",\n  \"unit\": \"kg\",\n  \"price\": 150,\n  \"reorder_level\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A20 Create product with duplicate SKU",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on sku\", function () { pm.expect(pm.response.json().errors).to.have.property(\"sku\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"supplier_id\": 1,\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-{{run_id}}\",\n  \"unit\": \"kg\",\n  \"price\": 150,\n  \"reorder_level\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A21 Create product with invalid data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Errors on each bad field\", function () { var e = pm.response.json().errors; [\"category_id\",\"name\",\"sku\",\"unit\",\"price\",\"reorder_level\"].forEach(function (k) { pm.expect(e).to.have.property(k); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 999,\n  \"supplier_id\": 1,\n  \"name\": \"\",\n  \"sku\": \"TEST 1!\",\n  \"unit\": \"box\",\n  \"price\": 0,\n  \"reorder_level\": -1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A22 Update product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Price changed\", function () { pm.expect(pm.response.json().data.price).to.eql(175.5); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"supplier_id\": 1,\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-{{run_id}}\",\n  \"unit\": \"kg\",\n  \"price\": 175.5,\n  \"reorder_level\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A23 Stock in (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Effect is increase\", function () { pm.expect(pm.response.json().data.effect).to.eql(\"increase\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"in\",\n  \"quantity\": 10,\n  \"reason\": \"Test delivery\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A24 Product now has 10 in stock",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"stock_qty is 10\", function () { pm.expect(pm.response.json().data.stock_qty).to.eql(10); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A25 Stock out more than available",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on quantity\", function () { pm.expect(pm.response.json().errors).to.have.property(\"quantity\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"out\",\n  \"quantity\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A26 Invalid movement type and quantity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Errors on type and quantity\", function () { var e = pm.response.json().errors; pm.expect(e).to.have.property(\"type\"); pm.expect(e).to.have.property(\"quantity\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"sell\",\n  \"quantity\": -5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A27 Delete product that has history (blocked)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A28 Create product to delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_product2_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"supplier_id\": 1,\n  \"name\": \"Test Product\",\n  \"sku\": \"DEL-{{run_id}}\",\n  \"unit\": \"kg\",\n  \"price\": 150,\n  \"reorder_level\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A29 Delete product with no history",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product2_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product2_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A30 Admin sees all movements",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Paginated, 290+ total\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.eql(15); pm.expect(j.meta.total).to.be.at.least(290); pm.expect(j.data[0]).to.have.property(\"product\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A31 Filter movements by type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Only spoilage\", function () { pm.response.json().data.forEach(function (m) { pm.expect(m.type).to.eql(\"spoilage\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stock-movements?type=spoilage",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "spoilage"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "2 As STAFF (Step 8)",
+      "item": [
+        {
+          "name": "S01 Staff can list products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S02 Staff cannot create a category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hacked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S03 Staff cannot create a supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hacked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/suppliers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "suppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S04 Staff cannot update a product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"supplier_id\": 1,\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-{{run_id}}\",\n  \"unit\": \"kg\",\n  \"price\": 1,\n  \"reorder_level\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S05 Staff cannot delete a product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S06 Staff records spoilage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Recorded by Ana Mercado\", function () { pm.expect(pm.response.json().data.user.name).to.eql(\"Ana Mercado\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"spoilage\",\n  \"quantity\": 2,\n  \"reason\": \"Broken during handling\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S07 Adjustment without direction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on direction\", function () { pm.expect(pm.response.json().errors).to.have.property(\"direction\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"adjustment\",\n  \"quantity\": 1,\n  \"reason\": \"Recount\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S08 Spoilage without reason",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on reason\", function () { pm.expect(pm.response.json().errors).to.have.property(\"reason\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{tmp_product_id}}\",\n  \"type\": \"spoilage\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S09 Stock is now 8",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"10 - 2 = 8\", function () { pm.expect(pm.response.json().data.stock_qty).to.eql(8); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{tmp_product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{tmp_product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "S10 Staff sees only their own movements",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"All rows are Ana Mercado's\", function () { var d = pm.response.json().data; pm.expect(d.length).to.be.above(0); d.forEach(function (m) { pm.expect(m.user.name).to.eql(\"Ana Mercado\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{staff_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "3 No token (Step 8)",
+      "item": [
+        {
+          "name": "N01 Products without a token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "N02 Record movement without a token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": 1,\n  \"type\": \"in\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/stock-movements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4 Purchase orders",
+      "item": [
+        {
+          "name": "P01 List purchase orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Paginated with details\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.be.at.least(8); var o = j.data[0]; pm.expect(o).to.have.property(\"supplier\"); pm.expect(o.items.length).to.be.above(0); pm.expect(o).to.have.property(\"can\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P02 Filter by status pending",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Only pending\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.be.at.least(3); j.data.forEach(function (o) { pm.expect(o.status).to.eql(\"pending\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders?status=pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P03 Filter by status received",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Only received\", function () { var j = pm.response.json(); pm.expect(j.meta.total).to.be.at.least(2); j.data.forEach(function (o) { pm.expect(o.status).to.eql(\"received\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders?status=received",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "received"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P04 Invalid status filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders?status=bogus",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "bogus"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P05 Remember stock of product 17",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.environment.set(\"stock_before\", pm.response.json().data.stock_qty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/17",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "17"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P06 Ana creates an order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_po_id\", pm.response.json().data.id);",
+                  "pm.test(\"Pending, total 29750, Ana can edit\", function () { var d = pm.response.json().data; pm.expect(d.status).to.eql(\"pending\"); pm.expect(d.total).to.eql(29750); pm.expect(d.requester.name).to.eql(\"Ana Mercado\"); pm.expect(d.can.edit).to.eql(true); pm.expect(d.can.approve).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 17,\n      \"quantity\": 20,\n      \"unit_cost\": 1200\n    },\n    {\n      \"product_id\": 18,\n      \"quantity\": 5,\n      \"unit_cost\": 1150\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P07 Product from another supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on items\", function () { pm.expect(pm.response.json().errors).to.have.property(\"items\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 8,\n      \"quantity\": 5,\n      \"unit_cost\": 100\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P08 Order without items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on items\", function () { pm.expect(pm.response.json().errors).to.have.property(\"items\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"items\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P09 Duplicate product and bad quantity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Item errors reported\", function () { var keys = Object.keys(pm.response.json().errors); pm.expect(keys.some(function (k) { return k.indexOf(\"items.\") === 0; })).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 17,\n      \"quantity\": -1,\n      \"unit_cost\": 100\n    },\n    {\n      \"product_id\": 17,\n      \"quantity\": 5,\n      \"unit_cost\": 100\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P10 Ana edits her own pending order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Updated, total 30000\", function () { var d = pm.response.json().data; pm.expect(d.notes).to.eql(\"Edited by Ana\"); pm.expect(d.items.length).to.eql(1); pm.expect(d.total).to.eql(30000); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Edited by Ana\",\n  \"items\": [\n    {\n      \"product_id\": 17,\n      \"quantity\": 25,\n      \"unit_cost\": 1200\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P11 Ramon cannot edit Ana's order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Hacked\",\n  \"items\": [\n    {\n      \"product_id\": 17,\n      \"quantity\": 20,\n      \"unit_cost\": 1200\n    },\n    {\n      \"product_id\": 18,\n      \"quantity\": 5,\n      \"unit_cost\": 1150\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P12 Ramon cannot delete Ana's order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P13 Staff cannot approve",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P14 Cannot receive a pending order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/receive",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "receive"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P15 Admin approves",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Approved by Elena Dizon\", function () { var d = pm.response.json().data; pm.expect(d.status).to.eql(\"approved\"); pm.expect(d.approver.name).to.eql(\"Elena Dizon\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P16 Cannot approve twice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P17 Cannot edit an approved order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 17,\n      \"quantity\": 20,\n      \"unit_cost\": 1200\n    },\n    {\n      \"product_id\": 18,\n      \"quantity\": 5,\n      \"unit_cost\": 1150\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P18 Ana receives the order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Received by Ana\", function () { var d = pm.response.json().data; pm.expect(d.status).to.eql(\"received\"); pm.expect(d.receiver.name).to.eql(\"Ana Mercado\"); pm.expect(d.received_at).to.not.eql(null); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/receive",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "receive"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P19 Stock went up by 25",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"stock = before + 25\", function () { pm.expect(pm.response.json().data.stock_qty).to.eql(parseFloat(pm.environment.get(\"stock_before\")) + 25); });",
+                  "pm.environment.set(\"stock_after\", pm.response.json().data.stock_qty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/17",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "17"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P20 Receiving twice is refused",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}/receive",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}",
+                "receive"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P21 Stock did NOT increase again",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"stock unchanged\", function () { pm.expect(pm.response.json().data.stock_qty).to.eql(parseFloat(pm.environment.get(\"stock_after\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/17",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "17"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P22 Receiving logged a stock-in movement",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Movement linked to the order\", function () { var m = pm.response.json().data.filter(function (x) { return String(x.purchase_order_id) === String(pm.environment.get(\"tmp_po_id\")); }); pm.expect(m.length).to.eql(1); pm.expect(m[0].quantity).to.eql(25); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stock-movements?product_id=17&type=in",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stock-movements"
+              ],
+              "query": [
+                {
+                  "key": "product_id",
+                  "value": "17"
+                },
+                {
+                  "key": "type",
+                  "value": "in"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P23 Ramon creates an order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_po2_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 18,\n      \"quantity\": 10,\n      \"unit_cost\": 1150\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P24 Admin rejects it",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Rejected\", function () { pm.expect(pm.response.json().data.status).to.eql(\"rejected\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po2_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po2_id}}",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P25 Cannot receive a rejected order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po2_id}}/receive",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po2_id}}",
+                "receive"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P26 Cannot reject twice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po2_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po2_id}}",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P27 Ramon creates another order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_po3_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": 3,\n  \"notes\": \"Postman test order\",\n  \"items\": [\n    {\n      \"product_id\": 18,\n      \"quantity\": 3,\n      \"unit_cost\": 1150\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P28 Ramon deletes his own pending order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ramon_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po3_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po3_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P29 Deleted order is gone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po3_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po3_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P30 Cannot delete a received order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/{{tmp_po_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "{{tmp_po_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P31 Approve an order that does not exist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders/999999/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders",
+                "999999",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "P32 Purchase orders without a token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/purchase-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "purchase-orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5 Users (admin only)",
+      "item": [
+        {
+          "name": "U01 Admin lists users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"3+ users, no passwords\", function () { var d = pm.response.json().data; pm.expect(d.length).to.be.at.least(3); d.forEach(function (u) { pm.expect(u).to.not.have.property(\"password\"); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U02 Admin creates a staff user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"tmp_user_id\", pm.response.json().data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temp Staff\",\n  \"email\": \"temp{{run_id}}@poultrystock.test\",\n  \"password\": \"Secret123\",\n  \"role\": \"staff\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U03 Duplicate email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on email\", function () { pm.expect(pm.response.json().errors).to.have.property(\"email\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temp Staff\",\n  \"email\": \"temp{{run_id}}@poultrystock.test\",\n  \"password\": \"Secret123\",\n  \"role\": \"staff\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U04 Invalid role and short password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Errors on role and password\", function () { var e = pm.response.json().errors; pm.expect(e).to.have.property(\"role\"); pm.expect(e).to.have.property(\"password\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"X\",\n  \"email\": \"x{{run_id}}@poultrystock.test\",\n  \"password\": \"short\",\n  \"role\": \"owner\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U05 Promote to admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Now admin\", function () { pm.expect(pm.response.json().data.role).to.eql(\"admin\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temp Staff\",\n  \"email\": \"temp{{run_id}}@poultrystock.test\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{tmp_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{tmp_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U06 Demote back to staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Now staff\", function () { pm.expect(pm.response.json().data.role).to.eql(\"staff\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temp Staff\",\n  \"email\": \"temp{{run_id}}@poultrystock.test\",\n  \"role\": \"staff\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{tmp_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{tmp_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U07 Delete the temporary user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/{{tmp_user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "{{tmp_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U08 Admin cannot delete themselves",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U09 Cannot demote the last admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 422\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Error is on role\", function () { pm.expect(pm.response.json().errors).to.have.property(\"role\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elena Dizon\",\n  \"email\": \"admin@poultrystock.test\",\n  \"role\": \"staff\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U10 Cannot delete a user with history",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U11 Staff cannot list users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "U12 Staff cannot create users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hacker\",\n  \"email\": \"hacker@poultrystock.test\",\n  \"password\": \"Secret123\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6 Dashboard",
+      "item": [
+        {
+          "name": "D01 Dashboard figures",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"All figures are numbers\", function () { var d = pm.response.json().data; [\"total_products\",\"low_stock_count\",\"pending_orders\",\"approved_orders\",\"inventory_value\",\"movements_this_week\"].forEach(function (k) { pm.expect(d[k]).to.be.a(\"number\"); }); pm.expect(d.total_products).to.be.at.least(25); pm.expect(d.inventory_value).to.be.above(0); });",
+                  "pm.test(\"Lists are included\", function () { var d = pm.response.json().data; pm.expect(d.low_stock_products.length).to.be.at.most(5); pm.expect(d.recent_movements.length).to.be.at.most(5); });",
+                  "pm.environment.set(\"dash_low\", pm.response.json().data.low_stock_count);",
+                  "pm.environment.set(\"dash_total\", pm.response.json().data.total_products);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D02 Dashboard low-stock matches the products filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Same number\", function () { pm.expect(pm.response.json().meta.total).to.eql(Number(pm.environment.get(\"dash_low\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?low_stock=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "low_stock",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D03 Dashboard total matches the products list",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Same number\", function () { pm.expect(pm.response.json().meta.total).to.eql(Number(pm.environment.get(\"dash_total\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D04 Dashboard without a token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.upsert({ key: 'Accept', value: 'application/json' });"
+        ]
+      }
+    }
+  ]
+}
