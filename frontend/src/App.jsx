@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
+import CategoriesPage from './pages/CategoriesPage.jsx';
+import SuppliersPage from './pages/SuppliersPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -21,6 +23,8 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/suppliers" element={<SuppliersPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
           <Route element={<AdminRoute />}>
             <Route path="/users" element={<UsersPage />} />

@@ -25,6 +25,13 @@ export default function AppLayout() {
   }
 
   const navClass = ({ isActive }) => `nav-link app-nav-link ${isActive ? 'active' : ''}`;
+  const navItems = [
+    ['Dashboard', '/dashboard'],
+    ['Products', '/products'],
+    ['Categories', '/categories'],
+    ['Suppliers', '/suppliers'],
+    ...(user?.role === 'admin' ? [['Users', '/users']] : []),
+  ];
 
   return (
     <div className="app-wrapper min-vh-100">
@@ -39,11 +46,9 @@ export default function AppLayout() {
           </button>
           <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="main-menu">
             <div className="navbar-nav me-auto mt-3 mt-md-0">
-              <NavLink to="/dashboard" className={navClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
-              <NavLink to="/products" className={navClass} onClick={() => setMenuOpen(false)}>Products</NavLink>
-              {user?.role === 'admin' && (
-                <NavLink to="/users" className={navClass} onClick={() => setMenuOpen(false)}>Users</NavLink>
-              )}
+              {navItems.map(([label, route]) => (
+                <NavLink key={route} to={route} className={navClass} onClick={() => setMenuOpen(false)}>{label}</NavLink>
+              ))}
             </div>
             <div className="d-flex flex-wrap gap-3 align-items-center mt-3 mt-md-0">
               <div className="user-meta text-md-end">
