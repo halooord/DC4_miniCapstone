@@ -1,19 +1,17 @@
 # Requirements Traceability Matrix
 
-Status values: Not started, In progress, Passed, Failed.
-A feature is marked Passed only after its test succeeds.
-Backend = tested with the Postman suite (docs/postman_collection.json).
+**Legend:** Passed = tested and confirmed; In progress = implemented but the full UI checklist has not yet been confirmed; Not started = missing deliverable. Backend API was previously tested with `docs/postman_collection.json`; frontend rows reflect user-reported manual testing through October 16, 2026.
 
-| # | Requirement | Backend | Frontend | Test | Expected | Backend status | Frontend status |
-|---|-------------|---------|----------|------|----------|----------------|-----------------|
-| F1 | Sanctum auth | AuthController, Sanctum | AuthContext, Login/Register, Axios interceptor | Register, login, /user, logout, bad token | 201, 200, 200, 204, 401 | Passed | Not started |
-| F2 | Role-based access | EnsureAdmin middleware, PurchaseOrderPolicy | AdminRoute, hidden nav | Staff calls an admin endpoint | 403 | Passed | Not started |
-| F3 | Full CRUD (related) | Products, Categories, Suppliers, Users, Purchase Orders controllers | List and form pages | Create, read, update, delete, delete-with-history | 201, 200, 204, 409 | Passed | Not started |
-| F4 | Search and filter | Product scopes, PO status filter | Search box, category select, low-stock toggle | ?search= &category_id= &low_stock=1 | Filtered results | Passed | Not started |
-| F5 | API pagination | paginate() on products, movements, POs | Pagination component | ?page=2 keeps filters | Correct meta | Passed | Not started |
-| F6 | Dashboard (3+ figures) | DashboardController | Dashboard cards | Compare with products list | Figures match | Passed | Not started |
-| F7 | Validation both sides | Form Requests | Form checks, 422 display | Duplicate SKU, price <= 0, quantity <= 0 | 422 and messages under fields | Passed | Not started |
-| F8 | User feedback | Proper status codes | Spinner, toasts, ConfirmModal, empty states | Delete confirm, network failure | UI feedback shown | n/a | Not started |
-| F9 | Status workflow | PO actions, DB transaction | Approve, Reject, Receive buttons | All transitions, double receive | Stock added once | Passed | Not started |
-| B1 | Seeders and factories | Factories, seeders | n/a | php artisan migrate:fresh --seed | 1 admin, 2 staff, 20+ records | Passed | n/a |
-| D1 | Deliverables | n/a | n/a | Fresh clone test | Runs from README | Not started | Not started |
+| # | Instructor requirement | Laravel backend | React frontend | Backend status | Frontend status | Evidence / next check |
+|---|---|---|---|---|---|---|
+| F1 | Sanctum authentication | AuthController, Sanctum | AuthContext, login, register, Axios interceptor | Passed | Passed | Admin/Staff login, registration, 422 login error, logout, token redirect observed |
+| F2 | Role-based access | EnsureAdmin, PurchaseOrderPolicy | AdminRoute and conditional actions | Passed | Passed | Staff redirected from `/users`, admin link hidden; backend authorization previously tested |
+| F3 | Full CRUD on 2+ related resources | Products, Categories, Suppliers, Users, Purchase Orders | React list and forms | Passed | In progress | List/forms shown, PO create works; **complete full CRUD and blocked-delete tests** |
+| F4 | Search and filter | Product scopes, order/movement filters | Product/PO/movement filter UIs | Passed | In progress | Search/filter controls shown; manually confirm combined filters and retained pagination |
+| F5 | Server-side pagination | Products, movements, purchase orders | Pagination | Passed | In progress | Products screenshot showed page 2; also verify movements/PO pagination with filters |
+| F6 | Dashboard summary figures | DashboardController | Live API dashboard cards | Passed | Passed | Figures and Refresh data tested |
+| F7 | Client/server validation | Laravel Form Requests | React field errors | Passed | Passed | Incorrect login and missing spoilage reason validated; negative-stock rejection verified |
+| F8 | User feedback | HTTP codes, error shape | Toasts, spinners, confirmation modal | n/a | In progress | UI visible; confirm blocked delete, network failure and mobile modal |
+| F9 | Status workflow | PO approval/rejection/receive transactions | PO actions and detail page | Passed | Passed | User confirmed Pending -> Approved -> Received plus stock increase; rejection needs final presentation check |
+| B1 | Seed realistic records | Migrations/seeders/factories | n/a | Passed | n/a | Original seed data; current local data may differ following tests |
+| D1 | Fresh clone and deliverables | Install instructions and API collection | Source, slides, demo assets | Not started | Not started | Must run separate fresh clone and add real screenshots + video URL |
