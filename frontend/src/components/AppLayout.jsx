@@ -30,6 +30,7 @@ export default function AppLayout() {
     ['Products', '/products'],
     ['Categories', '/categories'],
     ['Suppliers', '/suppliers'],
+    ['Stock Movements', '/stock-movements'],
     ...(user?.role === 'admin' ? [['Users', '/users']] : []),
   ];
 
