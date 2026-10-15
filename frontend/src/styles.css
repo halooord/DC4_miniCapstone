@@ -63,3 +63,22 @@ a:hover { color: #05524f; }
   .user-meta { text-align: left; }
   .app-nav-link { padding: .65rem .8rem !important; }
 }
+
+/* Phase B: dashboard figures and low-stock callouts */
+.dashboard-stat { border-top: 3px solid #0c7773; }
+.dashboard-stat-alert { border-top-color: #d48c2a; }
+.dashboard-stat-value {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.dashboard-stock-badge {
+  color: #7a4d00;
+  background: #fff0d1;
+  padding: .3rem .6rem;
+  border-radius: 999px;
+  font-size: .79rem;
+  font-weight: 700;
+}
