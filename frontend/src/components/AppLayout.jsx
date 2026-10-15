@@ -31,13 +31,14 @@ export default function AppLayout() {
     ['Categories', '/categories'],
     ['Suppliers', '/suppliers'],
     ['Stock Movements', '/stock-movements'],
+    ['Purchase Orders', '/purchase-orders'],
     ...(user?.role === 'admin' ? [['Users', '/users']] : []),
   ];
 
   return (
     <div className="app-wrapper min-vh-100">
       <header className="app-header">
-        <nav className="navbar navbar-expand-md navbar-dark container py-3" aria-label="Main navigation">
+        <nav className="navbar navbar-expand-xl navbar-dark container py-3" aria-label="Main navigation">
           <NavLink className="navbar-brand d-flex align-items-center gap-2 fw-bold" to="/dashboard" onClick={() => setMenuOpen(false)}>
             <span className="brand-mark" aria-hidden="true">P</span>
             PoultryStock
@@ -46,13 +47,13 @@ export default function AppLayout() {
             <span className="navbar-toggler-icon" />
           </button>
           <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="main-menu">
-            <div className="navbar-nav me-auto mt-3 mt-md-0">
+            <div className="navbar-nav me-auto mt-3 mt-xl-0">
               {navItems.map(([label, route]) => (
                 <NavLink key={route} to={route} className={navClass} onClick={() => setMenuOpen(false)}>{label}</NavLink>
               ))}
             </div>
-            <div className="d-flex flex-wrap gap-3 align-items-center mt-3 mt-md-0">
-              <div className="user-meta text-md-end">
+            <div className="d-flex flex-wrap gap-3 align-items-center mt-3 mt-xl-0">
+              <div className="user-meta text-xl-end">
                 <span className="d-block fw-semibold">{user?.name}</span>
                 <span className="d-block text-capitalize small">{user?.role}</span>
               </div>

@@ -8,6 +8,9 @@ import ProductsPage from './pages/ProductsPage.jsx';
 import CategoriesPage from './pages/CategoriesPage.jsx';
 import SuppliersPage from './pages/SuppliersPage.jsx';
 import StockMovementsPage from './pages/StockMovementsPage.jsx';
+import PurchaseOrdersPage from './pages/PurchaseOrdersPage.jsx';
+import PurchaseOrderDetailPage from './pages/PurchaseOrderDetailPage.jsx';
+import PurchaseOrderFormPage from './pages/PurchaseOrderFormPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -27,6 +30,10 @@ export default function App() {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
           <Route path="/stock-movements" element={<StockMovementsPage />} />
+          <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
+          <Route path="/purchase-orders/new" element={<PurchaseOrderFormPage />} />
+          <Route path="/purchase-orders/:id/edit" element={<PurchaseOrderFormPage />} />
+          <Route path="/purchase-orders/:id" element={<PurchaseOrderDetailPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
           <Route element={<AdminRoute />}>
             <Route path="/users" element={<UsersPage />} />
