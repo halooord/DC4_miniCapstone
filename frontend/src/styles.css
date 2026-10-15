@@ -82,3 +82,8 @@ a:hover { color: #05524f; }
   font-size: .79rem;
   font-weight: 700;
 }
+
+/* Products form: allow editing on small devices without clipping the footer. */
+.modal-dialog .modal-body { max-height: min(64vh, 590px); overflow-y: auto; }
+.table-responsive { scrollbar-width: thin; }
+.table > :not(caption) > * > * { padding: .85rem; }

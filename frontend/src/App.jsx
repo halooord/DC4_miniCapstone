@@ -4,6 +4,7 @@ import { AdminRoute, GuestRoute, ProtectedRoute } from './routes/RouteGuards.jsx
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import ProductsPage from './pages/ProductsPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import ForbiddenPage from './pages/ForbiddenPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -19,6 +20,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/products" element={<ProductsPage />} />
           <Route path="/forbidden" element={<ForbiddenPage />} />
           <Route element={<AdminRoute />}>
             <Route path="/users" element={<UsersPage />} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import api, { messageFrom } from '../services/api.js';
 import Spinner from '../components/Spinner.jsx';
@@ -158,6 +159,7 @@ export default function DashboardPage() {
                       ? `Showing up to 5 of ${dashboard.low_stock_count} low-stock products.`
                       : 'All products are above their reorder levels.'}
                   </p>
+                  <Link to="/products?low_stock=1" className="btn btn-sm btn-outline-primary mt-2">View low-stock products</Link>
                 </div>
                 {lowStock.length === 0 ? (
                   <EmptyState title="No low-stock products" description="Nothing needs restocking right now." />

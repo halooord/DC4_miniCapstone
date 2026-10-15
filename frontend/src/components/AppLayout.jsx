@@ -40,6 +40,7 @@ export default function AppLayout() {
           <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="main-menu">
             <div className="navbar-nav me-auto mt-3 mt-md-0">
               <NavLink to="/dashboard" className={navClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
+              <NavLink to="/products" className={navClass} onClick={() => setMenuOpen(false)}>Products</NavLink>
               {user?.role === 'admin' && (
                 <NavLink to="/users" className={navClass} onClick={() => setMenuOpen(false)}>Users</NavLink>
               )}
